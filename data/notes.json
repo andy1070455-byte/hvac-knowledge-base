@@ -1,0 +1,11 @@
+﻿[
+  {
+    "id": "2026-11-16-vapor-compression-cycle",
+    "title": "單段蒸氣壓縮冷凍循環狀態點與效能分析",
+    "date": "2026-11-16",
+    "category": "冷凍循環",
+    "tags": ["熱力學", "冷凍空調", "P-h圖", "COP"],
+    "summary": "探討理想與實際單段蒸氣壓縮冷凍循環之四大程序（壓縮、冷凝、膨脹、蒸發）及其性能係數 (COP) 計算。",
+    "filename": "2026-11-16-vapor-compression-cycle.md"
+  }
+]
