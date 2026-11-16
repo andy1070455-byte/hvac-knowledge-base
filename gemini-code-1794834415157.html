@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冷凍空調工程與熱流知識庫</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>❄️ 冷凍空調工程與熱流知識庫</h1>
+            <button id="theme-toggle" class="btn-theme">🌓 切換主題</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="filter-bar">
+            <input type="text" id="search-input" placeholder="搜尋工程筆記、關鍵字、公式...">
+            <div id="category-filters" class="category-tags"></div>
+        </div>
+
+        <section id="card-grid" class="card-grid"></section>
+
+        <section id="reader-view" class="reader-view hidden">
+            <button id="back-btn" class="btn-back">← 返回列表</button>
+            <article id="markdown-content" class="markdown-body"></article>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 HVAC & Thermal Engineering Knowledge Base. Powered by GitHub Pages.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
