@@ -1,0 +1,433 @@
+import os
+import json
+
+# 1. 自動建立所需資料夾
+for folder in ['notes', 'data', 'images']:
+    os.makedirs(folder, exist_ok=True)
+
+# 2. 寫入 AGENTS.md
+agents_content = """# 專案規範：冷凍空調工程與熱流知識庫
+
+## 1. 專案目的與核心理念
+* **一個主題一筆記（Atomic Notes 原則）**：聚焦於冷凍空調、熱力學、流體力學、通風換氣與空調負載計算，保持單一主題簡明。
+* **長期免維護負擔**：專案設計保持純粹、輕量，作為個人專業工程知識庫。
+
+## 2. 運作方式
+* 筆記以獨立 `.md` 檔案存放於 `notes/` 目錄。
+* 透過 `data/notes.json` 管理目錄索引（標題、分類、標籤、日期、摘要、檔名）。
+* 前端首頁採卡片網頁 (Card Grid) 展示，支援分類篩選與深淺色主題。
+
+## 3. 技術限制 (GitHub Pages 部署)
+* 完全不使用任何前端框架（限 React / Vue / Angular 等）。
+* 零打包/編譯流程（Zero-build，不使用 Webpack / Vite / npm build）。
+* 純 HTML + 原生 CSS (CSS 變數支援深色切換) + 原生 Vanilla ES6+ JavaScript。
+
+## 4. 目錄結構與圖片規範
+* 專門存放冷凍空調實體圖表或截圖素材於 `images/`，命名格式為 `YYYY-MM-DD-topic-slug-01.png`。
+* 內文引用以相對路徑 `../images/...` 確保 GitHub Pages 相容性。
+
+## 5. 筆記內文的雙軌配置
+* **情況 A（有提供工程圖表）**：精準嵌入於對應的空調知識點下方。
+* **情況 B（未提供圖片）**：若無對應圖片，由 AI 自動以純 HTML/SVG 繪製熱力循環或系統圖解補全。
+
+## 6. 只整理我給的資料（嚴格隔離原則）
+* 僅限使用你提供的文字、程序或公式數據。禁止擅自編造未經確認的外來工程事實；有疑慮須標記 `[待確認]`。
+"""
+with open("AGENTS.md", "w", encoding="utf-8") as f:
+    f.write(agents_content.strip())
+
+# 3. 寫入 data/notes.json
+notes_json = [
+  {
+    "id": "2026-11-16-vapor-compression-cycle",
+    "title": "單段蒸氣壓縮冷凍循環狀態點與效能分析",
+    "date": "2026-11-16",
+    "category": "冷凍循環",
+    "tags": ["熱力學", "冷凍空調", "P-h圖", "COP"],
+    "summary": "探討理想與實際單段蒸氣壓縮冷凍循環之四大程序（壓縮、冷凝、膨脹、蒸發）及其性能係數 (COP) 計算。",
+    "filename": "2026-11-16-vapor-compression-cycle.md"
+  }
+]
+with open("data/notes.json", "w", encoding="utf-8") as f:
+    json.dump(notes_json, f, ensure_ascii=False, indent=2)
+
+# 4. 寫入第一筆範例筆記
+note_content = """---
+title: "單段蒸氣壓縮冷凍循環狀態點與效能分析"
+date: 2026-11-16
+category: "冷凍循環"
+tags: ["熱力學", "冷凍空調", "P-h圖", "COP"]
+summary: "探討理想與實際單段蒸氣壓縮冷凍循環之四大程序及其性能係數 (COP) 計算。"
+---
+
+> **核心邏輯概述**：冷凍循環利用冷媒相變化吸收與釋放熱量，透過壓縮機、冷凝器、膨脹閥與蒸發器達成連續移熱。
+
+### 1. 核心原理與計算
+* **程序 1→2（等熵壓縮）**：過熱蒸氣經壓縮機壓縮至高壓高溫狀態。
+  $$\\dot{W}_{in} = \\dot{m} (h_2 - h_1)$$
+* **程序 2→3（等壓冷凝）**：高壓冷媒於冷凝器中釋放熱量予環境（空氣或冷卻水）。
+  $$\\dot{Q}_{out} = \\dot{m} (h_2 - h_3)$$
+* **程序 3→4（等焓膨脹）**：高壓液體經膨脹閥降壓降溫，變為低壓濕蒸氣。
+  $$h_3 \\approx h_4$$
+* **程序 4→1（等壓蒸發）**：低壓濕蒸氣於蒸發器中自被冷卻空間吸熱。
+  $$\\dot{Q}_{in} = \\dot{m} (h_1 - h_4)$$
+
+![蒸氣壓縮冷凍循環 P-h 圖](../images/2026-11-16-vapor-compression-cycle-01.png)
+
+### 2. 原始數據與熱流參數推導
+* 性能係數（Coefficient of Performance, COP）：
+  $$COP_{refrig} = \\frac{\\dot{Q}_{in}}{\\dot{W}_{in}} = \\frac{h_1 - h_4}{h_2 - h_1}$$
+* 容許冷凍噸（réfrigération ton, RT）：
+  $$1 \\text{ RT} = 3.517 \\text{ kW} = 12,000 \\text{ Btu/hr}$$
+
+### 3. 補充說明與經驗參數除錯
+* **過熱度與過冷度控制**：蒸發器出口適度保持 5~7°C 之過熱度，可避免壓縮機發生液擊（Liquid Slug）；冷凝器出口保持 3~5°C 之過冷度以提升系統冷房能力。
+"""
+with open("notes/2026-11-16-vapor-compression-cycle.md", "w", encoding="utf-8") as f:
+    f.write(note_content.strip())
+
+# 5. 寫入 index.html
+index_html = """<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冷凍空調工程與熱流知識庫</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>❄️ 冷凍空調工程與熱流知識庫</h1>
+            <button id="theme-toggle" class="btn-theme">🌓 切換主題</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="filter-bar">
+            <input type="text" id="search-input" placeholder="搜尋工程筆記、關鍵字、公式...">
+            <div id="category-filters" class="category-tags"></div>
+        </div>
+
+        <section id="card-grid" class="card-grid"></section>
+
+        <section id="reader-view" class="reader-view hidden">
+            <button id="back-btn" class="btn-back">← 返回列表</button>
+            <article id="markdown-content" class="markdown-body"></article>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 HVAC & Thermal Engineering Knowledge Base. Powered by GitHub Pages.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
+"""
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(index_html.strip())
+
+# 6. 寫入 style.css
+style_css = """:root {
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --accent-color: #0d6efd;
+    --border-color: #dee2e6;
+    --code-bg: #f1f3f5;
+}
+
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e9ecef;
+    --text-muted: #adb5bd;
+    --accent-color: #3b82f6;
+    --border-color: #2d2d2d;
+    --code-bg: #2a2a2a;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.btn-theme {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.filter-bar {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+.category-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag-btn {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.tag-btn.active {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.note-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.note-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.note-card h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+
+.note-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.note-summary {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.reader-view {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 2.5rem;
+}
+
+.btn-back {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+.markdown-body pre {
+    background-color: var(--code-bg);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 4rem;
+}
+"""
+with open("style.css", "w", encoding="utf-8") as f:
+    f.write(style_css.strip())
+
+# 7. 寫入 app.js
+app_js = """document.addEventListener("DOMContentLoaded", () => {
+    const cardGrid = document.getElementById("card-grid");
+    const readerView = document.getElementById("reader-view");
+    const markdownContent = document.getElementById("markdown-content");
+    const searchInput = document.getElementById("search-input");
+    const categoryFilters = document.getElementById("category-filters");
+    const backBtn = document.getElementById("back-btn");
+    const themeToggle = document.getElementById("theme-toggle");
+    const filterBarContainer = document.querySelector(".filter-bar");
+
+    let allNotes = [];
+    let currentCategory = "all";
+
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+
+    themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+    });
+
+    fetch("data/notes.json")
+        .then(response => response.json())
+        .then(data => {
+            allNotes = data;
+            initCategories(data);
+            renderCards(data);
+        })
+        .catch(err => console.error("無法載入筆記索引：", err));
+
+    function initCategories(notes) {
+        const categories = ["all", ...new Set(notes.map(n => n.category))];
+        categoryFilters.innerHTML = categories.map(cat => `
+            <button class="tag-btn ${cat === 'all' ? 'active' : ''}" data-category="${cat}">
+                ${cat === 'all' ? '全部類別' : cat}
+            </button>
+        `).join("");
+
+        categoryFilters.querySelectorAll(".tag-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                categoryFilters.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+                e.target.classList.add("active");
+                currentCategory = e.target.getAttribute("data-category");
+                filterAndRender();
+            });
+        });
+    }
+
+    function renderCards(notes) {
+        if (notes.length === 0) {
+            cardGrid.innerHTML = "<p>沒有找到相關的工程筆記。</p>";
+            return;
+        }
+
+        cardGrid.innerHTML = notes.map(note => `
+            <div class="note-card" data-filename="${note.filename}">
+                <div class="note-meta">${note.date} · ${note.category}</div>
+                <h3>${note.title}</h3>
+                <p class="note-summary">${note.summary}</p>
+            </div>
+        `).join("");
+
+        document.querySelectorAll(".note-card").forEach(card => {
+            card.addEventListener("click", () => {
+                const filename = card.getAttribute("data-filename");
+                loadMarkdownNote(filename);
+            });
+        });
+    }
+
+    function loadMarkdownNote(filename) {
+        fetch(`notes/${filename}`)
+            .then(res => res.text())
+            .then(mdText => {
+                const cleanedMd = mdText.replace(/^---[\\s\\S]*?---/, "");
+                markdownContent.innerHTML = marked.parse(cleanedMd);
+                
+                cardGrid.classList.add("hidden");
+                filterBarContainer.classList.add("hidden");
+                readerView.classList.remove("hidden");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            })
+            .catch(err => alert("載入筆記檔案失敗！"));
+    }
+
+    backBtn.addEventListener("click", () => {
+        readerView.classList.add("hidden");
+        cardGrid.classList.remove("hidden");
+        filterBarContainer.classList.remove("hidden");
+    });
+
+    function filterAndRender() {
+        const keyword = searchInput.value.toLowerCase();
+        const filtered = allNotes.filter(note => {
+            const matchCategory = currentCategory === "all" || note.category === currentCategory;
+            const matchKeyword = note.title.toLowerCase().includes(keyword) || 
+                                 note.summary.toLowerCase().includes(keyword) ||
+                                 note.tags.some(t => t.toLowerCase().includes(keyword));
+            return matchCategory && matchKeyword;
+        });
+        renderCards(filtered);
+    }
+
+    searchInput.addEventListener("input", filterAndRender);
+});
+"""
+with open("app.js", "w", encoding="utf-8") as f:
+    f.write(app_js.strip())
+
+print("✅ 所有冷凍空調知識庫網站檔案（含網頁前端與筆記）已成功生成！")
